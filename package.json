@@ -1,7 +1,7 @@
 {
-  "name": "pixel-forge",
+  "name": "guire",
   "version": "0.1.0",
-  "description": "",
+  "description": "Graphical User Interface Regression Engine",
   "main": "source/index.js",
   "directories": {
     "test": "tests"
@@ -17,7 +17,12 @@
   "license": "MIT",
   "dependencies": {
     "chalk": "^1.1.3",
+    "file-exists": "^1.0.0",
+    "fs-extra": "^0.30.0",
+    "image-diff": "^1.6.0",
     "minimist": "^1.2.0",
-    "selenium-webdriver": "^2.53.3"
+    "mkdir-p": "0.0.7",
+    "selenium-webdriver": "^2.53.3",
+    "sha256": "^0.2.0"
   }
 }

@@ -1,6 +1,17 @@
+const fs = require("fs-extra");
+const path = require("path");
+
+const mkdir = require("mkdir-p");
+const fileExists = require("file-exists");
 const chalk = require("chalk");
 const Webdriver = require("selenium-webdriver");
+const imageDiff = require("image-diff");
 
+const tools = require("./tools.js");
+
+const IMAGE_DIFFER = 100;
+const IMAGE_SAME = 101;
+const IMAGE_CREATED = 102;
 const NOOP = function() {};
 
 function logTest(name) {
@@ -8,14 +19,58 @@ function logTest(name) {
 }
 
 function logTestComponent(name, componentName) {
-    console.log(`    ${chalk.bold.gray(name)} : ${chalk.cyan(componentName)}`);
+    process.stdout.write(`    ${chalk.bold.gray(name)} : ${chalk.cyan(componentName)} `);
 }
 
-function testComponent(targetName, component, webdriver) {
+function testComponent(targetName, component, config, webdriver) {
+    let id = tools.createTestID(targetName, component.name),
+        shotFilename = id + ".png",
+        shotDiffFilename = id + ".diff.png",
+        shotsDir = path.join(config.reportDir, "shots"),
+        referenceShot = path.join(config.referenceDir, shotFilename),
+        testingShot = path.join(shotsDir, shotFilename),
+        testingShotDiff = path.join(shotsDir, shotDiffFilename);
+    mkdir(shotsDir);
     logTestComponent(targetName, component.name);
     return webdriver.executeAsyncScript(component.setupFn || NOOP)
         .then(function() {
-
+            return webdriver.takeScreenshot().then(function(data) {
+                fs.writeFileSync(
+                    testingShot,
+                    data,
+                    "base64"
+                );
+            });
+        })
+        .then(function() {
+            // compare
+            if (fileExists(referenceShot)) {
+                return new Promise(function(resolve, reject) {
+                    imageDiff({
+                        actualImage: testingShot,
+                        expectedImage: referenceShot,
+                        diffImage: testingShotDiff,
+                    }, function(err, imagesAreSame) {
+                        if (err) {
+                            (reject)(err);
+                        } else {
+                            (resolve)(imagesAreSame ? IMAGE_SAME : IMAGE_DIFFER);
+                        }
+                    });
+                });
+            } else {
+                fs.copySync(testingShot, referenceShot);
+                return IMAGE_CREATED;
+            }
+        })
+        .then(function(imagesAreSame) {
+            if (imagesAreSame === IMAGE_SAME) {
+                console.log(chalk.green("✔ OK"));
+            } else if (imagesAreSame === IMAGE_DIFFER) {
+                console.log(chalk.red("✘ Failed"));
+            } else if (imagesAreSame === IMAGE_CREATED) {
+                console.log(chalk.blue("★ New"));
+            }
         });
 }
 
@@ -42,7 +97,7 @@ function waitForPageReady(webdriver, target) {
     return new Promise((resolve) => waitAndCheck(resolve));
 }
 
-module.exports = function runForge(target) {
+module.exports = function runForge(target, config) {
     let webdriver;
     logTest(target.name);
     return Promise.resolve()
@@ -66,7 +121,8 @@ module.exports = function runForge(target) {
         .then(function() {
             let componentTests = Promise.resolve();
             target.components.forEach(function(component) {
-                componentTests = componentTests.then(() => testComponent(target.name, component, webdriver));
+                componentTests = componentTests
+                    .then(() => testComponent(target.name, component, config, webdriver));
             });
             return componentTests;
         })

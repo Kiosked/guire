@@ -1,11 +1,21 @@
-const chalk = require("chalk");
 const path = require("path");
 
+const chalk = require("chalk");
+const mkdir = require("mkdir-p");
 const argv = require("minimist")(process.argv.slice(2));
 const package = require("../package.json");
 const root = path.resolve(__dirname + "/..");
 
 const runForge = require("./runner.js");
+
+// Config
+const cwd = process.cwd();
+let reportDir = argv["report-dir"] ?
+    path.resolve(path.join(cwd, argv["report-dir"])) :
+    path.join(cwd, "guire", "report");
+let referenceDir = argv["reference-dir"] ?
+    path.resolve(path.join(cwd, argv["reference-dir"])) :
+    path.join(cwd, "guire", "reference");
 
 let targetConfigs = argv._ || [];
 if (!Array.isArray(targetConfigs)) {
@@ -15,7 +25,11 @@ if (!Array.isArray(targetConfigs)) {
 let chain = Promise.resolve();
 
 // Init
-console.log(`${chalk.bgBlue.white(" PixelForge ")} v${package.version}`);
+console.log(`${chalk.bgBlue.white(" GUIRE ")} v${package.version}`);
+
+// Directories
+mkdir(reportDir);
+mkdir(referenceDir);
 
 // Resolve targets
 targetConfigs = targetConfigs
@@ -35,7 +49,10 @@ targetConfigs.forEach(function(config) {
 
 targets.forEach(function(target) {
     chain = chain.then(() => {
-        return runForge(target);
+        return runForge(target, {
+            referenceDir,
+            reportDir
+        });
     });
 });
 
