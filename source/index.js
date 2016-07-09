@@ -12,6 +12,7 @@ const reporter = require("./reporter.js");
 
 // Config
 const cwd = process.cwd();
+const title = argv.title || "GUIRE";
 let reportDir = argv["report-dir"] ?
     path.resolve(path.join(cwd, argv["report-dir"])) :
     path.join(cwd, "guire", "report");
@@ -65,7 +66,7 @@ targets.forEach(function(target) {
 
 return chain
     .then(function() {
-        return reporter.createReport("GUIRE", reportObjects);
+        return reporter.createReport(title, reportObjects);
     })
     .then(function(reportHTML) {
         fs.writeFileSync(
