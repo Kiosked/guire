@@ -34,7 +34,8 @@ function testComponent(targetName, component, config, webdriver) {
         id,
         componentName: component.name,
         targetName,
-        result: null
+        result: null,
+        images: {}
     };
     mkdir(shotsDir);
     logTestComponent(targetName, component.name);
@@ -70,6 +71,11 @@ function testComponent(targetName, component, config, webdriver) {
             }
         })
         .then(function(imageStatus) {
+            // save images
+            reportObj.images.ref = referenceShot;
+            reportObj.images.test = testingShot;
+            reportObj.images.diff = testingShotDiff;
+            // report
             if (imageStatus === IMAGE_SAME) {
                 console.log(chalk.green("✔ OK"));
             } else if (imageStatus === IMAGE_DIFFER) {
