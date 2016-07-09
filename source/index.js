@@ -19,6 +19,7 @@ let reportDir = argv["report-dir"] ?
 let referenceDir = argv["reference-dir"] ?
     path.resolve(path.join(cwd, argv["reference-dir"])) :
     path.join(cwd, "guire", "reference");
+let exitAsPass = true;
 
 let targetConfigs = argv._ || [];
 if (!Array.isArray(targetConfigs)) {
@@ -61,6 +62,9 @@ targets.forEach(function(target) {
         })
         .then(function(report) {
             reportObjects.push(report);
+            if (!report.allPassed) {
+                exitAsPass = false;
+            }
         });
 });
 
@@ -77,4 +81,9 @@ return chain
     })
     .then(function() {
         console.log("Finished.");
+        if (!exitAsPass) {
+            setTimeout(function() {
+                process.exit(1);
+            }, 500);
+        }
     });

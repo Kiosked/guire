@@ -115,7 +115,8 @@ module.exports = function runForge(target, config) {
     let webdriver,
         reportObj = {
             targetName: target.name,
-            components: []
+            components: [],
+            allPassed: true
         };
     logTest(target.name);
     return Promise.resolve()
@@ -141,7 +142,12 @@ module.exports = function runForge(target, config) {
             target.components.forEach(function(component) {
                 componentTests = componentTests
                     .then(() => testComponent(target.name, component, config, webdriver))
-                    .then((result) => { reportObj.components.push(result); });
+                    .then((result) => {
+                        reportObj.components.push(result);
+                        if (result.result === IMAGE_DIFFER) {
+                            reportObj.allPassed = false;
+                        }
+                    });
             });
             return componentTests;
         })
