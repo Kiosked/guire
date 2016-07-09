@@ -1,4 +1,5 @@
 const path = require("path");
+const fs = require("fs");
 
 const chalk = require("chalk");
 const mkdir = require("mkdir-p");
@@ -7,6 +8,7 @@ const package = require("../package.json");
 const root = path.resolve(__dirname + "/..");
 
 const runForge = require("./runner.js");
+const reporter = require("./reporter.js");
 
 // Config
 const cwd = process.cwd();
@@ -22,7 +24,8 @@ if (!Array.isArray(targetConfigs)) {
     targetConfigs = [targetConfigs];
 }
 
-let chain = Promise.resolve();
+let chain = Promise.resolve(),
+    reportObjects = [];
 
 // Init
 console.log(`${chalk.bgBlue.white(" GUIRE ")} v${package.version}`);
@@ -48,14 +51,29 @@ targetConfigs.forEach(function(config) {
 });
 
 targets.forEach(function(target) {
-    chain = chain.then(() => {
-        return runForge(target, {
-            referenceDir,
-            reportDir
+    chain = chain
+        .then(() => {
+            return runForge(target, {
+                referenceDir,
+                reportDir
+            });
+        })
+        .then(function(report) {
+            reportObjects.push(report);
         });
-    });
 });
 
-return chain.then(function() {
-    console.log("Finished.");
-});
+return chain
+    .then(function() {
+        return reporter.createReport("GUIRE", reportObjects);
+    })
+    .then(function(reportHTML) {
+        fs.writeFileSync(
+            path.join(reportDir, "report.html"),
+            reportHTML,
+            "utf8"
+        );
+    })
+    .then(function() {
+        console.log("Finished.");
+    });

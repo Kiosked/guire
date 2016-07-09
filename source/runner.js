@@ -9,9 +9,9 @@ const imageDiff = require("image-diff");
 
 const tools = require("./tools.js");
 
-const IMAGE_DIFFER = 100;
-const IMAGE_SAME = 101;
-const IMAGE_CREATED = 102;
+const IMAGE_DIFFER = "different";
+const IMAGE_SAME = "identical";
+const IMAGE_CREATED = "new";
 const NOOP = function() {};
 
 function logTest(name) {
@@ -30,6 +30,12 @@ function testComponent(targetName, component, config, webdriver) {
         referenceShot = path.join(config.referenceDir, shotFilename),
         testingShot = path.join(shotsDir, shotFilename),
         testingShotDiff = path.join(shotsDir, shotDiffFilename);
+    let reportObj = {
+        id,
+        componentName: component.name,
+        targetName,
+        result: null
+    };
     mkdir(shotsDir);
     logTestComponent(targetName, component.name);
     return webdriver.executeAsyncScript(component.setupFn || NOOP)
@@ -63,14 +69,16 @@ function testComponent(targetName, component, config, webdriver) {
                 return IMAGE_CREATED;
             }
         })
-        .then(function(imagesAreSame) {
-            if (imagesAreSame === IMAGE_SAME) {
+        .then(function(imageStatus) {
+            if (imageStatus === IMAGE_SAME) {
                 console.log(chalk.green("✔ OK"));
-            } else if (imagesAreSame === IMAGE_DIFFER) {
+            } else if (imageStatus === IMAGE_DIFFER) {
                 console.log(chalk.red("✘ Failed"));
-            } else if (imagesAreSame === IMAGE_CREATED) {
+            } else if (imageStatus === IMAGE_CREATED) {
                 console.log(chalk.blue("★ New"));
             }
+            reportObj.result = imageStatus;
+            return reportObj;
         });
 }
 
@@ -98,7 +106,11 @@ function waitForPageReady(webdriver, target) {
 }
 
 module.exports = function runForge(target, config) {
-    let webdriver;
+    let webdriver,
+        reportObj = {
+            targetName: target.name,
+            components: []
+        };
     logTest(target.name);
     return Promise.resolve()
         .then(function() {
@@ -122,13 +134,15 @@ module.exports = function runForge(target, config) {
             let componentTests = Promise.resolve();
             target.components.forEach(function(component) {
                 componentTests = componentTests
-                    .then(() => testComponent(target.name, component, config, webdriver));
+                    .then(() => testComponent(target.name, component, config, webdriver))
+                    .then((result) => { reportObj.components.push(result); });
             });
             return componentTests;
         })
         .then(function() {
             // cleanup
             webdriver.quit();
+            return reportObj;
         })
         .catch(function(err) {
             setTimeout(function() {
