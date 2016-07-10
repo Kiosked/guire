@@ -5,15 +5,17 @@ const fs = require("fs");
 
 const chalk = require("chalk");
 const mkdir = require("mkdir-p");
-const argv = require("minimist")(process.argv.slice(2));
-const package = require("../package.json");
-const root = path.resolve(__dirname + "/..");
+const minimist = require("minimist");
+
+const root = path.resolve(path.join(__dirname, "/.."));
+const pkg = require("../package.json");
 
 const runForge = require("./runner.js");
 const reporter = require("./reporter.js");
 
 // Config
 const cwd = process.cwd();
+const argv = minimist(process.argv.slice(2));
 const title = argv.title || "GUIRE";
 let reportDir = argv["report-dir"] ?
     path.resolve(path.join(cwd, argv["report-dir"])) :
@@ -32,7 +34,7 @@ let chain = Promise.resolve(),
     reportObjects = [];
 
 // Init
-console.log(`${chalk.bgBlue.white(" GUIRE ")} v${package.version}`);
+console.log(`${chalk.bgBlue.white(" GUIRE ")} v${pkg.version}`);
 
 // Directories
 mkdir(reportDir);

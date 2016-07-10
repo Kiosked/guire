@@ -42,8 +42,13 @@
     "space": 4,
     "envs": ["browser", "node"],
     "rules": {
+      "babel/arrow-parens": "off",
+      "babel/object-curly-spacing": ["error", "always"],
       "babel/object-shorthand": "off",
+      "no-var": "off",
+      "one-var": "off",
       "prefer-arrow-callback": "off",
+      "prefer-const": "off",
       "quotes": ["error", "double", {
 		    "allowTemplateLiterals": true
       }],

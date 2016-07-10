@@ -1,6 +1,6 @@
-const fs = require("fs-extra");
 const path = require("path");
 
+const fs = require("fs-extra");
 const mkdir = require("mkdir-p");
 const fileExists = require("file-exists");
 const chalk = require("chalk");
@@ -24,8 +24,8 @@ function logTestComponent(name, componentName) {
 
 function testComponent(targetName, component, config, webdriver) {
     let id = tools.createTestID(targetName, component.name),
-        shotFilename = id + ".png",
-        shotDiffFilename = id + ".diff.png",
+        shotFilename = `${id}.png`,
+        shotDiffFilename = `${id}.diff.png`,
         shotsDir = path.join(config.reportDir, "shots"),
         referenceShot = path.join(config.referenceDir, shotFilename),
         testingShot = path.join(shotsDir, shotFilename),
@@ -56,7 +56,7 @@ function testComponent(targetName, component, config, webdriver) {
                     imageDiff({
                         actualImage: testingShot,
                         expectedImage: referenceShot,
-                        diffImage: testingShotDiff,
+                        diffImage: testingShotDiff
                     }, function(err, imagesAreSame) {
                         if (err) {
                             (reject)(err);
@@ -65,10 +65,9 @@ function testComponent(targetName, component, config, webdriver) {
                         }
                     });
                 });
-            } else {
-                fs.copySync(testingShot, referenceShot);
-                return IMAGE_CREATED;
             }
+            fs.copySync(testingShot, referenceShot);
+            return IMAGE_CREATED;
         })
         .then(function(imageStatus) {
             // save images
@@ -101,13 +100,13 @@ function waitForPageReady(webdriver, target) {
                     .then(function(ready) {
                         if (ready) {
                             (done)();
-                            //setTimeout(done, 100);
+                            // setTimeout(done, 100);
                         } else {
                             waitAndCheck(done);
                         }
                     });
             }, 250);
-        }
+        };
     return new Promise((resolve) => waitAndCheck(resolve));
 }
 
@@ -123,8 +122,8 @@ module.exports = function runForge(target, config) {
         .then(function() {
             let webdriverCapabilities = { browserName: "chrome" };
             webdriverCapabilities = Webdriver.Capabilities.chrome();
-            webdriverCapabilities.set('chromeOptions', {
-                'args': ["--allow-file-access-from-files"]
+            webdriverCapabilities.set("chromeOptions", {
+                args: ["--allow-file-access-from-files"]
             });
             webdriver = (new Webdriver.Builder())
                 .withCapabilities(webdriverCapabilities)
