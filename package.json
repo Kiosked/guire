@@ -3,11 +3,18 @@
   "version": "0.1.0",
   "description": "Graphical User Interface Regression Engine",
   "main": "source/index.js",
+  "bin": {
+    "guire": "./source/index.js"
+  },
   "directories": {
     "test": "tests"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "clean": "npm run clean:test",
+    "clean:test": "rimraf ./guire",
+    "example": "./source/index.js tests/single.forge.js",
+    "lint": "xo",
+    "test": "npm run lint && npm run clean && npm run example"
   },
   "repository": {
     "type": "git",
@@ -24,5 +31,19 @@
     "mkdir-p": "0.0.7",
     "selenium-webdriver": "^2.53.3",
     "sha256": "^0.2.0"
+  },
+  "devDependencies": {
+    "rimraf": "^2.5.3",
+    "xo": "^0.16.0"
+  },
+  "xo": {
+    "esnext": true,
+    "semicolon": true,
+    "space": 4,
+    "rules": {
+      "quotes": ["error", "double", {
+		"allowTemplateLiterals": true
+      }]
+    }
   }
 }
