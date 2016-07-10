@@ -4,8 +4,11 @@ const fs = require("fs-extra");
 const mkdir = require("mkdir-p");
 const fileExists = require("file-exists");
 const chalk = require("chalk");
-const Webdriver = require("selenium-webdriver");
 const imageDiff = require("image-diff");
+
+const Webdriver = require("selenium-webdriver");
+const WebdriverChrome = require("selenium-webdriver/chrome");
+const chromePath = require("chromedriver").path;
 
 const tools = require("./tools.js");
 
@@ -13,6 +16,11 @@ const IMAGE_DIFFER = "different";
 const IMAGE_SAME = "identical";
 const IMAGE_CREATED = "new";
 const NOOP = function() {};
+
+// BEGIN init webdriver
+let service = new WebdriverChrome.ServiceBuilder(chromePath).build();
+WebdriverChrome.setDefaultService(service);
+// END init webdriver
 
 function logTest(name) {
     console.log(`  ${chalk.underline.white(name)}`);
@@ -120,8 +128,7 @@ module.exports = function runForge(target, config) {
     logTest(target.name);
     return Promise.resolve()
         .then(function() {
-            let webdriverCapabilities = { browserName: "chrome" };
-            webdriverCapabilities = Webdriver.Capabilities.chrome();
+            let webdriverCapabilities = Webdriver.Capabilities.chrome();
             webdriverCapabilities.set("chromeOptions", {
                 args: ["--allow-file-access-from-files"]
             });
