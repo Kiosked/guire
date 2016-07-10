@@ -1,5 +1,7 @@
 # GUIRE
 
+[![Build Status](https://travis-ci.org/Kiosked/guire.svg?branch=master)](https://travis-ci.org/Kiosked/guire) [![XO code style](https://img.shields.io/badge/code_style-XO-5ed9c7.svg)](https://github.com/sindresorhus/xo)
+
 GUIRE - Graphical User Interface Regression Engine - Is a testing framework for user interface components. GUIRE helps detect changes that occur in the browser - from a single pixel or colour unit to entire component breakages.
 
 ## Usage
