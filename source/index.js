@@ -23,6 +23,7 @@ let reportDir = argv["report-dir"] ?
 let referenceDir = argv["reference-dir"] ?
     path.resolve(path.join(cwd, argv["reference-dir"])) :
     path.join(cwd, "guire", "reference");
+let audit = argv.audit === true;
 let exitAsPass = true;
 
 let targetConfigs = argv._ || [];
@@ -61,7 +62,8 @@ targets.forEach(function(target) {
         .then(() => {
             return runForge(target, {
                 referenceDir,
-                reportDir
+                reportDir,
+                audit
             });
         })
         .then(function(report) {
@@ -85,7 +87,7 @@ return chain
     })
     .then(function() {
         console.log("Finished.");
-        if (!exitAsPass) {
+        if (!exitAsPass && !audit) {
             setTimeout(function() {
                 process.exit(1);
             }, 500);

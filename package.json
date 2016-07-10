@@ -30,6 +30,7 @@
     "image-diff": "^1.6.0",
     "minimist": "^1.2.0",
     "mkdir-p": "0.0.7",
+    "select-prompt": "^0.2.0",
     "selenium-webdriver": "^2.53.3",
     "sha256": "^0.2.0"
   },

@@ -5,6 +5,7 @@ const mkdir = require("mkdir-p");
 const fileExists = require("file-exists");
 const chalk = require("chalk");
 const imageDiff = require("image-diff");
+const prompt = require("select-prompt");
 
 const Webdriver = require("selenium-webdriver");
 const WebdriverChrome = require("selenium-webdriver/chrome");
@@ -16,6 +17,11 @@ const IMAGE_DIFFER = "different";
 const IMAGE_SAME = "identical";
 const IMAGE_CREATED = "new";
 const NOOP = function() {};
+
+const PROMPT_DIFFERENT = [
+    { title: "Skip", value: "skip" },
+	{ title: "Save as new reference", value: "save" }
+];
 
 // BEGIN init webdriver
 let service = new WebdriverChrome.ServiceBuilder(chromePath).build();
@@ -91,6 +97,20 @@ function testComponent(targetName, component, config, webdriver) {
                 console.log(chalk.blue("★ New"));
             }
             reportObj.result = imageStatus;
+            if (config.audit) {
+                return new Promise(function(resolve) {
+                    prompt("Select action:", PROMPT_DIFFERENT)
+                        .on("abort", function() {
+                            (resolve)(reportObj);
+                        })
+                        .on("submit", function(value) {
+                            if (value === "save") {
+                                fs.copySync(testingShot, referenceShot);
+                            }
+                            (resolve)(reportObj);
+                        });
+                });
+            }
             return reportObj;
         });
 }
