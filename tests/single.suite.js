@@ -1,6 +1,6 @@
 const path = require("path");
 
-const testURL = path.resolve(path.join(__dirname, "single.forge/index.html"));
+const testURL = path.resolve(path.join(__dirname, "single.suite/index.html"));
 
 module.exports = {
     name: "single-test",

@@ -12,7 +12,7 @@
   "scripts": {
     "clean": "npm run clean:test",
     "clean:test": "rimraf ./guire",
-    "example": "./source/index.js tests/single.forge.js",
+    "example": "./source/index.js tests/single.suite.js",
     "lint": "xo",
     "test": "npm run lint && npm run clean && npm run example"
   },
@@ -40,10 +40,14 @@
     "esnext": true,
     "semicolon": true,
     "space": 4,
+    "envs": ["browser", "node"],
     "rules": {
+      "babel/object-shorthand": "off",
+      "prefer-arrow-callback": "off",
       "quotes": ["error", "double", {
-		"allowTemplateLiterals": true
-      }]
+		    "allowTemplateLiterals": true
+      }],
+      "space-before-function-paren": "off"
     }
   }
 }
