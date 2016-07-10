@@ -1,0 +1,22 @@
+sudo: required
+dist: trusty
+addons:
+  firefox: latest
+  apt:
+    sources:
+      - google-chrome
+    packages:
+      - google-chrome-stable
+      - google-chrome-beta
+#before_install:
+before_script:
+  - export DISPLAY=:99.0
+  - sh -e /etc/init.d/xvfb start
+  - sleep 3 # give xvfb some time to start
+#before_script:
+#  - export NODE_PATH=./node_modules/buttercup/node_modules/:./node_modules/:$NODE_PATH
+script:
+  - npm test
+language: node_js
+node_js:
+  - "6.2.2"
