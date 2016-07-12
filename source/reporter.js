@@ -1,6 +1,8 @@
 const path = require("path");
 const fs = require("fs");
 
+const fileExists = require("file-exists");
+
 const reportResourcePath = path.resolve(path.join(__dirname, "../resources/report.html"));
 
 function base64EncodeImageFile(file) {
@@ -16,11 +18,14 @@ function convertImageToCSSData(file) {
 }
 
 function getImageDivHTML(imageFilename) {
-    let imageCSSVal = convertImageToCSSData(imageFilename);
-    let width = 250,
-        scale = width / 1024,
-        height = 768 * scale;
-    return `<div style="border: 1px #000 dotted;background-image: ${imageCSSVal}; width:${width}px; height:${height}px; background-size:${width}px ${height}px"></div>`;
+    if (fileExists(imageFilename)) {
+        let imageCSSVal = convertImageToCSSData(imageFilename);
+        let width = 250,
+            scale = width / 1024,
+            height = 768 * scale;
+        return `<div style="border: 1px #000 dotted;background-image: ${imageCSSVal}; width:${width}px; height:${height}px; background-size:${width}px ${height}px"></div>`;
+    }
+    return `<div><i>No difference</i></div>`;
 }
 
 module.exports = {

@@ -92,4 +92,10 @@ return chain
                 process.exit(1);
             }, 500);
         }
+    })
+    .catch(function(err) {
+        console.error("Runner failed");
+        setTimeout(function() {
+            throw err;
+        }, 0);
     });
