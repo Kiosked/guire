@@ -14,7 +14,29 @@ function base64EncodeImageFile(file) {
 
 function convertImageToCSSData(file) {
     let base64 = base64EncodeImageFile(file);
-    return `url(data:image/png;base64,${base64})`;
+    return `data:image/png;base64,${base64}`;
+}
+
+function displayStatus(status) {
+    let symbol,
+        colour;
+    switch (status) {
+        case "different":
+            symbol = "✘";
+            colour = "#FD2222";
+            break;
+        case "identical":
+            symbol = "✔";
+            colour = "#28D422";
+            break;
+        case "new":
+            /* falls through */
+        default:
+            symbol = "★";
+            colour = "#2791FB";
+            break;
+    }
+    return `<span style="color: ${colour}">${htmlEncode(symbol)} ${ucfirst(status)}`;
 }
 
 function getImageDivHTML(imageFilename) {
@@ -23,9 +45,25 @@ function getImageDivHTML(imageFilename) {
         let width = 250,
             scale = width / 1024,
             height = 768 * scale;
-        return `<div style="border: 1px #000 dotted;background-image: ${imageCSSVal}; width:${width}px; height:${height}px; background-size:${width}px ${height}px"></div>`;
+        return `<div style="border: 1px #000 dotted; width:${width + 2}px; height:${height + 2}px"><img src="${imageCSSVal}" style="width:${width}px; height:${height}px" /></div>`;
     }
     return `<div><i>No difference</i></div>`;
+}
+
+function htmlEncode(string) {
+    var retVal = "";
+    for (var i = 0; i < string.length; i += 1) {
+        if (string.codePointAt(i) > 127) {
+            retVal += `&#${string.codePointAt(i)};`;
+        } else {
+            retVal += string.charAt(i);
+        }
+    }
+    return retVal;
+}
+
+function ucfirst(text) {
+    return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
 module.exports = {
@@ -46,7 +84,7 @@ module.exports = {
                                 </tr>
                                 <tr>
                                     <th scope="row">Status</th>
-                                    <td>${componentResult.result}</td>
+                                    <td>${displayStatus(componentResult.result)}</td>
                                 </tr>
                                 <tr>
                                     <th scope="row">Reference</th>
