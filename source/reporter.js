@@ -1,8 +1,10 @@
 const path = require("path");
 const fs = require("fs");
+const exec = require("child_process").exec;
 
 const fileExists = require("file-exists");
 
+const pdfExecPath = path.resolve(path.join(__dirname, "../node_modules/.bin/electron-pdf"));
 const reportResourcePath = path.resolve(path.join(__dirname, "../resources/report.html"));
 
 function base64EncodeImageFile(file) {
@@ -109,6 +111,21 @@ module.exports = {
             .join("\n");
         reportHTML = reportHTML.replace("[COMPONENTS]", items);
         return reportHTML;
+    },
+
+    generatePDF: function(inputHTMLFile, outputFilename) {
+        return new Promise(function(resolve, reject) {
+            exec(
+                `${pdfExecPath} ${inputHTMLFile} ${outputFilename}`,
+                function(error) {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        (resolve)();
+                    }
+                }
+            );
+        });
     }
 
 };

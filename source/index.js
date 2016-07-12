@@ -79,11 +79,14 @@ return chain
         return reporter.createReport(title, reportObjects);
     })
     .then(function(reportHTML) {
+        let reportHTMLPath = path.join(reportDir, "report.html"),
+            reportPDFPath = path.join(reportDir, "report.pdf");
         fs.writeFileSync(
-            path.join(reportDir, "report.html"),
+            reportHTMLPath,
             reportHTML,
             "utf8"
         );
+        return reporter.generatePDF(reportHTMLPath, reportPDFPath);
     })
     .then(function() {
         console.log("Finished.");
