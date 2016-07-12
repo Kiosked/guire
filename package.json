@@ -1,6 +1,6 @@
 {
   "name": "guire",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Graphical User Interface Regression Engine",
   "main": "source/index.js",
   "bin": {

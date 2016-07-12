@@ -9,7 +9,11 @@ GUIRE - Graphical User Interface Regression Engine - Is a testing framework for 
 GUIRE is a command-line application who's usage looks like:
 
 ```sh
-guire <suite-path...> --report-dir [report-directory] --reference-dir [reference-directory]
+guire <suite-path...>
+    --report-dir [report-directory]
+    --reference-dir [reference-directory]
+    --audit
+    --pdf
 ```
 
 | Argument            | Description                                                         |
@@ -17,7 +21,8 @@ guire <suite-path...> --report-dir [report-directory] --reference-dir [reference
 | --report-dir        | Set the report directory for output of all reporting and results    |
 | --reference-dir     | Set the reference directory for storage of comparison (control) images |
 | --title             | Set the title in the report                                         |
-| --audit             | Enter [audit mode](###auditing)
+| --audit             | Enter [audit mode](###auditing)                                     |
+| --pdf               | Enable PDF output for reporting                                     |
 
 Each test suite must be a JavaScript file who's configuration is [described here](TEST_SUITE.md).
 

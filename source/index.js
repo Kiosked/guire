@@ -24,6 +24,7 @@ let referenceDir = argv["reference-dir"] ?
     path.resolve(path.join(cwd, argv["reference-dir"])) :
     path.join(cwd, "guire", "reference");
 let audit = argv.audit === true;
+let outputPDF = argv.pdf === true;
 let exitAsPass = true;
 
 let targetConfigs = argv._ || [];
@@ -86,7 +87,9 @@ return chain
             reportHTML,
             "utf8"
         );
-        return reporter.generatePDF(reportHTMLPath, reportPDFPath);
+        if (outputPDF) {
+            return reporter.generatePDF(reportHTMLPath, reportPDFPath);
+        }
     })
     .then(function() {
         console.log("Finished.");
