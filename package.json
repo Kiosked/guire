@@ -1,5 +1,5 @@
 {
-  "name": "guire",
+  "name": "@kiosked/guire",
   "version": "0.3.1",
   "description": "Graphical User Interface Regression Engine",
   "main": "source/index.js",
