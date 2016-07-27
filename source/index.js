@@ -93,11 +93,14 @@ return chain
     })
     .then(function() {
         console.log("Finished.");
-        if (!exitAsPass && !audit) {
-            setTimeout(function() {
-                process.exit(1);
-            }, 500);
-        }
+        setTimeout(function() {
+            if (!exitAsPass) {
+                let exitCode = (audit) ? 0 : 1;
+                process.exit(exitCode);
+            } else {
+                process.exit(0);
+            }
+        }, 600);
     })
     .catch(function(err) {
         console.error("Runner failed");
