@@ -1,6 +1,6 @@
 {
   "name": "@kiosked/guire",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Graphical User Interface Regression Engine",
   "main": "source/index.js",
   "bin": {
