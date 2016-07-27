@@ -16,11 +16,14 @@ const tools = require("./tools.js");
 const IMAGE_DIFFER = "different";
 const IMAGE_SAME = "identical";
 const IMAGE_CREATED = "new";
-const NOOP = function() {};
+
+const NOOP = function(done) {
+    done();
+};
 
 const PROMPT_DIFFERENT = [
     { title: "Skip", value: "skip" },
-	{ title: "Save as new reference", value: "save" }
+    { title: "Save as new reference", value: "save" }
 ];
 
 // BEGIN init webdriver
@@ -155,9 +158,12 @@ module.exports = function runForge(target, config) {
             webdriver = (new Webdriver.Builder())
                 .withCapabilities(webdriverCapabilities)
                 .build();
-            webdriver.manage().window().setSize(1024, 768);
-            webdriver.get(target.url);
+            return Promise.all([
+                webdriver.manage().timeouts().setScriptTimeout(10000),
+                webdriver.manage().window().setSize(1024, 768)
+            ]);
         })
+        .then(() => webdriver.get(target.url))
         .then(() => waitForPageReady(webdriver, target))
         .then(function() {
             // setup and execution

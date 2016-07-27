@@ -94,11 +94,11 @@ return chain
     .then(function() {
         console.log("Finished.");
         setTimeout(function() {
-            if (!exitAsPass) {
+            if (exitAsPass) {
+                process.exit(0);
+            } else {
                 let exitCode = (audit) ? 0 : 1;
                 process.exit(exitCode);
-            } else {
-                process.exit(0);
             }
         }, 600);
     })
