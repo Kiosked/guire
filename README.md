@@ -4,6 +4,9 @@
 
 GUIRE - Graphical User Interface Regression Engine - Is a testing framework for user interface components. GUIRE helps detect changes that occur in the browser - from a single pixel or colour unit to entire component breakages.
 
+## DEPRECATED
+GUIRE is no longer maintained, but preserved for reference.
+
 ## Usage
 
 GUIRE is a command-line application who's usage looks like:
